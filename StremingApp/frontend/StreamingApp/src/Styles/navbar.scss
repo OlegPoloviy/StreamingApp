@@ -1,0 +1,28 @@
+@import './fonts';
+
+.navbar{
+  position: fixed;
+  display: flex;
+  width: 100%;
+  justify-content: space-around;
+  font-family: 'SF Pro Display';
+
+  &-logo-text{
+    color: #F5C51C;
+    font-family: "SF Pro Display";
+    font-size: 24px;
+    b{
+      background-color: #F5C51C;
+      padding: 0.2rem;
+      border-radius: 10%;
+      color: black;
+    }
+  }
+
+  &-list{
+    display: flex;
+    width: 60%;
+    justify-content: space-around;
+    list-style-type: none;
+  }
+}
