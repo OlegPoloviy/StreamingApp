@@ -3,6 +3,7 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import "../Styles/navbar.scss";
 
 export function Navbar() {
+
     return (
         <>
             <div className="navbar">

@@ -1,45 +1,110 @@
-.register-container {
-  max-width: 400px;
-  margin: auto;
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  background-color: #f9f9f9;
-}
+@import "./fonts";
 
-.register-form .form-group {
-  margin-bottom: 15px;
-}
+// Загальна стилізація для контейнера
+.container {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  font-family: 'SF Pro Display', sans-serif;
 
-.register-form label {
-  display: block;
-  margin-bottom: 5px;
-  font-weight: bold;
-}
+  h2 {
+    font-size: 46px;
+    margin: 0;
+    line-height: 1.2;
+    font-weight: 600;
+  }
 
-.register-form input {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
+  b {
+    color: #fbd38d;
+    font-weight: 700;
+  }
 
-.register-form .error {
-  color: red;
-  font-size: 12px;
-  margin-top: 5px;
-}
+  &-form {
+    width: 40%;
+    padding: 2rem;
+    height: 90vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    background-color: #f9f9f9;
+    border-radius: 8px;
 
-.register-form button {
-  padding: 10px 15px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
+    .register-form {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 60%;
+    }
 
-.register-form button:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
+    input {
+      background-color: #ffffff;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      height: 4vh;
+      width: 20vw;
+      padding: 0.5rem;
+      font-size: 16px;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    input:focus {
+      border-color: #fbd38d;
+      box-shadow: 0 0 8px rgba(251, 211, 141, 0.5);
+      outline: none;
+    }
+  }
+
+  &-image {
+    width: 60%;
+    height: 100%;
+    background: url('../assets/images/img.png') no-repeat center center;
+    background-size: cover;
+  }
+
+  img {
+    display: none;
+  }
+
+  .form-group {
+    width: 20vw;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .error {
+    color: #ff4d4f;
+    font-size: 14px;
+    margin-top: 0.5rem;
+  }
+
+  .button {
+    background-color: #000000;
+    border: none;
+    color: #fbd38d;
+    width: 105%;
+    height: 5vh;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+  }
+
+  .button:hover {
+    background-color: #222222;
+    transform: scale(1.02);
+  }
+
+  .button:active {
+    transform: scale(0.98);
+  }
+
+  .hadAccount{
+    align-items: center;
+    margin-left: 2vw;
+    display: flex;
+    gap: 10px;
+  }
 }

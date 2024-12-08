@@ -1,8 +1,12 @@
 import { Formik, Form, Field, ErrorMessage } from 'formik';
+import Image from "../assets/images/register.jpg"
 import {Link} from "react-router-dom";
 import axios from "axios";
+import {toast,ToastContainer} from "react-toastify";
+import {useNavigate} from "react-router-dom";
 import * as yup from 'yup';
 import "../Styles/RegistrationPage.scss";
+import 'react-toastify/dist/ReactToastify.css';
 
 
 const validationSchema = yup.object({
@@ -36,55 +40,73 @@ const initialValues = {
     confirmPassword: '',
 };
 
+
 export function RegisterPage() {
+    const navigate = useNavigate();
+
     const handleSubmit = (values) => {
        axios.post("http://localhost:3030/users/register",values)
-           .then(res => console.log(res))
-
+           .then(res => {
+               toast.success(`${res.data}`,{position: 'top-right'})
+               setTimeout(() => {
+                   navigate('/')
+               },2500);
+               console.log(res)
+           })
+           .catch(err => {
+               toast.error(`An error occurred with registering: ${err}`,{position: 'top-right'})
+           })
     };
 
     return (
-        <div className="register-container">
-            <h2>Register Form</h2>
-            <Formik
-                initialValues={initialValues}
-                validationSchema={validationSchema}
-                onSubmit={handleSubmit}
-            >
+        <div className="container">
+            <div className={"container-image"}>
+                <img src={Image} alt=""/>
+            </div>
+            <div className="container-form">
+                <ToastContainer/>
+                <h2>Register</h2>
+                <p>Welcome to the <b>Streaming Platform</b></p>
+                <Formik
+                    initialValues={initialValues}
+                    validationSchema={validationSchema}
+                    onSubmit={handleSubmit}
+                >
                     <Form className="register-form">
                         <div className="form-group">
-                            <label htmlFor="login">Login</label>
-                            <Field name="login" type="text" />
-                            <ErrorMessage name="login" component="div" className="error" />
+                            <Field name="login" type="text" placeholder={'Login'}/>
+                            <ErrorMessage name="login" component="div" className="error"/>
                         </div>
 
                         <div className="form-group">
-                            <label htmlFor="email">Email</label>
-                            <Field name="email" type="email" />
-                            <ErrorMessage name="email" component="div" className="error" />
+                            <Field name="email" type="email" placeholder={'Email'}/>
+                            <ErrorMessage name="email" component="div" className="error"/>
                         </div>
 
                         <div className="form-group">
-                            <label htmlFor="password">Password</label>
-                            <Field name="password" type="password" />
-                            <ErrorMessage name="password" component="div" className="error" />
+                            <Field name="password" type="password" placeholder={'Password'}/>
+                            <ErrorMessage name="password" component="div" className="error"/>
                         </div>
 
                         <div className="form-group">
-                            <label htmlFor="confirmPassword">Confirm Password</label>
-                            <Field name="confirmPassword" type="password" />
-                            <ErrorMessage name="confirmPassword" component="div" className="error" />
+                            <Field name="confirmPassword" type="password"  placeholder={'Confirm password'}/>
+                            <ErrorMessage name="confirmPassword" component="div" className="error"/>
                         </div>
 
                         <div style={{textAlign: "center"}}>
-                            <button type="submit">
+                            <button type="submit" className={'button'}>
                                 Register
                             </button>
-                            <Link to={"/login"}>Already had account</Link>
+                        </div>
+                        <div className={'hadAccount'}>
+                            <p>Had our account: </p>
+                            <Link to={"/login"} style={{color: '#fbd38d',textDecoration: 'none'}}>Already had account</Link>
                         </div>
 
                     </Form>
-            </Formik>
+                </Formik>
+            </div>
         </div>
+
     );
 }

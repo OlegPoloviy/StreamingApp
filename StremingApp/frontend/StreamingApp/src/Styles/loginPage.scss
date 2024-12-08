@@ -1,0 +1,105 @@
+@import "./fonts";
+
+.login-container {
+  display: flex;
+  justify-content: space-between;
+  width: 100vw;
+  height: 100vh;
+  font-family: 'SF Pro Display', sans-serif;
+
+  .image-container {
+    width: 50%;
+    height: 100%;
+    background: url('../assets/images/img_2.png') no-repeat center;
+    background-size: cover;
+  }
+
+  .form-container {
+    width: 40%;
+    height: 90%;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+
+    h2 {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+    }
+
+    p {
+      font-size: 1rem;
+      color: #666;
+      margin-bottom: 2rem;
+    }
+  }
+
+  .login-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    width: 80%;
+
+    .form-group {
+      width: 100%;
+
+      input {
+        width: 100%;
+        padding: 0.8rem;
+        font-size: 1rem;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        transition: all 0.3s ease;
+
+        &:focus {
+          border-color: #fbd38d;
+          box-shadow: 0 0 5px rgba(251, 211, 141, 0.5);
+        }
+      }
+    }
+
+    .error {
+      color: red;
+      font-size: 0.875rem;
+    }
+
+    .form-links {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      margin: 1rem 0;
+
+      .link {
+        font-size: 0.9rem;
+        color: #007BFF;
+        text-decoration: none;
+        transition: color 0.2s;
+
+        &:hover {
+          color: #0056b3;
+        }
+      }
+    }
+  }
+
+  .button {
+    width: 20vw;
+    padding: 0.8rem;
+    font-size: 1rem;
+    color: #fbd38d;
+    background-color: #000;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background-color: #222;
+      transform: scale(1.02);
+    }
+  }
+}
