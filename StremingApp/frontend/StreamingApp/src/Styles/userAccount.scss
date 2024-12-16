@@ -1,0 +1,41 @@
+.profile {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh; // Центрує блок по вертикалі на всю висоту вікна
+
+  .profile_container {
+    display: flex;
+    flex-direction: column;
+    align-items: center; // Центрує всі елементи по горизонталі
+    gap: 1.5rem; // Збільшений проміжок між елементами
+    position: relative;
+    top: 10vh;
+    width: 100%;
+    max-width: 400px; // Обмеження ширини для кращого вигляду на великих екранах
+    padding: 2rem;
+    background-color: #f9f9f9; // Світлий фон для контейнера
+    border-radius: 12px; // Закруглені кути
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); // Тінь для глибини
+
+    img {
+      width: 120px;
+      height: 120px;
+      object-fit: cover; // Обрізання та підгонка зображення
+      border-radius: 50%; // Кругле зображення
+      border: 4px solid #ff9800; // Рамка для підкреслення зображення
+    }
+
+    h2 {
+      font-size: 1.8rem;
+      color: #333;
+      margin: 0;
+    }
+
+    p {
+      font-size: 1rem;
+      color: #666;
+      margin: 0;
+    }
+  }
+}
