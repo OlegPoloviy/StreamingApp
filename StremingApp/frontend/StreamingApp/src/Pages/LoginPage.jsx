@@ -1,37 +1,40 @@
-import { Formik, Form, Field, ErrorMessage } from 'formik';
+import { Formik, Form, Field, ErrorMessage } from "formik";
 import { Link } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
-import axios from "axios";
-import * as yup from 'yup';
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import {setUser} from "../store/slices/user.slice.jsx";
+import {loginUser} from "../store/services/api.jsx";
+import * as yup from "yup";
 import "../Styles/loginPage.scss";
 import { Switch } from "@mui/material";
-import {useNavigate} from "react-router-dom";
 
 const validationSchema = yup.object({
-    login: yup.string().required('Login is required.'),
-    password: yup.string().required('Password is required.').min(6, 'Password must be at least 6 characters.'),
+    login: yup.string().required("Login is required."),
+    password: yup.string().required("Password is required.").min(6, "Password must be at least 6 characters."),
 });
 
 const initialValues = {
-    login: '',
-    password: '',
+    login: "",
+    password: "",
 };
 
 export function LoginPage() {
+    const dispatch = useDispatch();
     const navigate = useNavigate();
 
     const handleSubmit = async (values, { setSubmitting, setErrors }) => {
         try {
-            const response = await axios.post("http://localhost:3030/users/signup", values, { withCredentials: true });
-            console.log(response);
-            toast.success(`${response.data.message}`, { position: 'top-right' });
+            const userData = await loginUser(values);
+            dispatch(setUser(userData)); // зберігаємо користувача в Redux
+            toast.success(`${userData.message}`, { position: "top-right" });
             setTimeout(() => {
-                navigate("/")
-            },2500)
+                navigate("/");
+            }, 2500);
         } catch (error) {
             console.error("Login failed:", error);
-            toast.error(`An error occurred: ${error.response.data.error}`, { position: 'top-right' });
-            setErrors({ login: 'Invalid login or password.' });
+            toast.error(`An error occurred: ${error}`, { position: "top-right" });
+            setErrors({ login: "Invalid login or password." });
         } finally {
             setSubmitting(false);
         }
@@ -44,11 +47,7 @@ export function LoginPage() {
                 <h2>Welcome Back</h2>
                 <p>Please enter your login and password</p>
                 <ToastContainer />
-                <Formik
-                    initialValues={initialValues}
-                    validationSchema={validationSchema}
-                    onSubmit={handleSubmit}
-                >
+                <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={handleSubmit}>
                     {({ isSubmitting }) => (
                         <Form className="login-form">
                             <div className="form-group">
@@ -62,11 +61,13 @@ export function LoginPage() {
                             </div>
 
                             <div className="form-links">
-                                <div style={{display: 'flex',justifyContent: 'space-between',width:'35%',alignItems:'center'}}>
-                                    <Switch color="warning" sx={{width: 60,height:40}}/>
-                                    <h4 style={{margin: 0}}>Remember me</h4>
+                                <div style={{ display: "flex", justifyContent: "space-between", width: "35%", alignItems: "center" }}>
+                                    <Switch color="warning" sx={{ width: 60, height: 40 }} />
+                                    <h4 style={{ margin: 0 }}>Remember me</h4>
                                 </div>
-                                <Link to="/register" className="link">Dont have an account? Register</Link>
+                                <Link to="/register" className="link">
+                                    Don't have an account? Register
+                                </Link>
                             </div>
 
                             <div>

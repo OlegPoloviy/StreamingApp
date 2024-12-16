@@ -1,8 +1,11 @@
 import { NavLink } from "react-router-dom";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import {useSelector} from "react-redux";
 import "../Styles/navbar.scss";
 
 export function Navbar() {
+
+    const user = useSelector(store => store)
 
     return (
         <>
@@ -17,9 +20,18 @@ export function Navbar() {
                     <li><NavLink to="/tv-series"  style={{color:"black",textDecoration:"none"}}>Tv series</NavLink></li>
                 </ul>
                 <div className="navbar-account-icon">
-                    <NavLink to={"/register"}>
-                        <AccountCircleIcon style={{ fontSize: 40, color: 'black',cursor: "pointer" }} />
-                    </NavLink>
+                    {
+                        user ? (
+                            <NavLink to={"/userAccount"}>
+                                <AccountCircleIcon style={{ fontSize: 40, color: 'black',cursor: "pointer" }} />
+                            </NavLink>
+                        ): (
+                            <NavLink to={"/register"}>
+                                <AccountCircleIcon style={{ fontSize: 40, color: 'black',cursor: "pointer" }} />
+                            </NavLink>
+                        )
+                    }
+
                 </div>
             </div>
         </>
