@@ -7,6 +7,7 @@ import cors from "cors";
 import "dotenv/config"
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
+import { filmRouter } from "../routes/filmsRouter.js";
 import session from "express-session";
 
 const PORT = process.env.SERVER_PORT;
@@ -28,6 +29,7 @@ app.use(cors({
 }));
 app.use(bodyParser.json())
 app.use(appRouter);
+app.use('/films',filmRouter)
 app.use("/users",userRouter)
 
 app.listen(PORT,() => {
