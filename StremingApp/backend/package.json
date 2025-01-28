@@ -12,6 +12,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@prisma/client": "^6.2.1",
     "@supabase/postgrest-js": "^1.17.2",
     "@supabase/supabase-js": "^2.46.1",
     "bcrypt": "^5.1.1",
@@ -22,6 +23,11 @@
     "express": "^4.21.1",
     "express-openid-connect": "^2.17.1",
     "express-session": "^1.18.1",
-    "nodemon": "^3.1.7"
+    "jsonwebtoken": "^9.0.2",
+    "nodemon": "^3.1.7",
+    "uuid": "^11.0.5"
+  },
+  "devDependencies": {
+    "prisma": "^6.2.1"
   }
 }

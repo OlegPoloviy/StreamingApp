@@ -1,0 +1,37 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Films {
+  id         BigInt   @id @default(autoincrement())
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  title      String?
+  cover_url  String?
+  genre      String?
+}
+
+model Users {
+  id              BigInt   @id @default(autoincrement())
+  created_at      DateTime @default(now()) @db.Timestamptz(6)
+  login           String   @unique
+  email           String   @unique
+  password        String
+  photo_link      String?
+  is_activated    Boolean? @default(false)
+  activation_link String?
+  token           token[]
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model token {
+  id             BigInt  @id @default(autoincrement())
+  user           BigInt?
+  reshreshTocken String
+  Users          Users?  @relation(fields: [user], references: [id], onDelete: Cascade)
+}

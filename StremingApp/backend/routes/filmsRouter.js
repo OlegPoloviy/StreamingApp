@@ -12,3 +12,13 @@ filmRouter.get('/', async (req,res) => {
         res.status(500).json({error: err})
     }
 })
+
+filmRouter.get('/latest',async (req,res) => {
+    try{
+        const films = await Films.getLatest();
+        res.status(200).send(films);
+    } catch(err){
+        console.error(err);
+        res.status(500).json({error: err})
+    }
+})

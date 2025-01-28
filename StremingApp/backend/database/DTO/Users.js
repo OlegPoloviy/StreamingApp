@@ -1,81 +1,50 @@
-// Users.js
 import { supabase } from "../dbConfig.js";
-import bcrypt from "bcrypt"
+import bcrypt from "bcrypt";
+import { v4 as uuid } from 'uuid';
+import { mailService } from "../services/mail-service.js";
+import { TokenService } from "../services/token-service.js";
 
 export class Users {
-    static async getUsers() {
-        const { data, error } = await supabase
-            .from("Users")
-            .select("*");
-
-        if (error) {
-            console.error("Error fetching users:", error);
-            return null;
-        }
-
-        return data;
-    }
-
-   static async signUp(data) {
-        const {login,email,password} = data;
-
-        const hashed =  await bcrypt.hash(password,10)
-
-       if (!login || !email || !password) {
-           throw new Error('All fields (login, email, password) are required.');
-       }
-
-        const {data: result,error} = await supabase
-            .from("Users")
-            .insert({
-                login,
-                email,
-                password: hashed
-            })
-
-       if(error){
-           throw new Error(error.message);
-       }
-
-       return result;
-   }
-
-    static async signIn(data) {
-        const { login, email, password } = data;
-
-        // Перевірка вхідних даних
-        if (!login || !password) {
-            throw new Error('All fields (login, email, password) are required.');
-        }
-
+    static async registration(login, email, password) {
         try {
-            // Пошук користувача в базі даних
-            const { data: user, error } = await supabase
-                .from("Users")
-                .select("*")
-                .eq("login", login);
+            const { data: candidate, error } = await supabase.from("Users")
+                .select("email")
+                .or(`email.eq.${email},login.eq.${login}`);
 
-            if (error) {
-                throw new Error(`Database error: ${error.message}`);
+            if (candidate && candidate.length > 0) {
+                throw new Error("User already exists");
             }
 
-            // Перевірка, чи знайдено користувача
-            if (!user || user.length === 0) {
-                throw new Error('User not found.');
+            if (!password) {
+                throw new Error("Password is required");
             }
 
-            const existing = user[0];
+            const hash = await bcrypt.hash(password, 10);
+            const activationLink = uuid();
 
-            // Перевірка пароля
-            const isPasswordValid = bcrypt.compareSync(password, existing.password);
-            if (!isPasswordValid) {
-                throw new Error('Wrong password.');
+            const { data: user, error: userError } = await supabase.from("Users")
+                .insert({ login, email, password: hash, activation_link: activationLink })
+                .select();
+
+
+            console.log("Insert Result -:", user);
+            console.log("Insert Result - Error:", userError);
+
+            if (userError) {
+                throw new Error("Failed to register user: " + JSON.stringify(userError));
             }
 
-            return existing; // Повертаємо знайденого користувача
-        } catch (err) {
-            // Кидаємо специфічну помилку
-            throw new Error(err.message || 'An unknown error occurred.');
+
+            await mailService.sendEmail(email, activationLink);
+            const tokens = TokenService.generateTokens({ email, login });
+            await TokenService.saveToken(user[0].id, tokens.refreshToken);
+
+            return {
+                ...tokens,
+                user
+            };
+        } catch (error) {
+            throw new Error("Registration failed: " + error.message);
         }
     }
 }
