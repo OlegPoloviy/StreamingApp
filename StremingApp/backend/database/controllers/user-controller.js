@@ -21,6 +21,16 @@ export class UserController {
         }
     }
 
+    static async activate(req,res,next){
+        try{
+            const activationLink = req.params.link;
+            await Users.activate(activationLink);
+            return res.redirect(process.env.CLIENT_URL)
+        }catch(err){
+            console.error(err)
+        }
+    }
+
     static async logout(req,res,next){
         try{
 

@@ -35,7 +35,7 @@ export class Users {
             }
 
 
-            await mailService.sendEmail(email, activationLink);
+            await mailService.sendEmail(email, `${process.env.SERVER_URL}/users/activate/${activationLink}`);
             const tokens = TokenService.generateTokens({ email, login });
             await TokenService.saveToken(user[0].id, tokens.refreshToken);
 
@@ -47,4 +47,43 @@ export class Users {
             throw new Error("Registration failed: " + error.message);
         }
     }
+
+    static async activate(activationLink) {
+        if (!activationLink) {
+            throw new Error("Activation link is required");
+        }
+
+        const { data: user, error: userError } = await supabase
+            .from("Users")
+            .select('*')
+            .eq('activation_link', activationLink)
+            .single(); // .single() дозволяє працювати з одним записом
+
+        if (userError) {
+            throw new Error(`Error fetching user: ${userError.message}`);
+        }
+
+        if (!user) {
+            throw new Error("User with this activation link does not exist");
+        }
+
+        if (user && user[0].is_activated) {
+            throw new Error("This account is already activated");
+        }
+
+        const { error: updateError } = await supabase
+            .from("Users")
+            .update({ is_activated: true })
+            .eq('id', user[0].id);
+
+        if (updateError) {
+            throw new Error(`Error activating user: ${updateError.message}`);
+        }
+
+        return {
+            message: "User successfully activated",
+            userId: user[0].id,
+        };
+    }
+
 }
