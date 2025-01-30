@@ -57,11 +57,13 @@ export class Users {
             .from("Users")
             .select('*')
             .eq('activation_link', activationLink)
-            .single(); // .single() дозволяє працювати з одним записом
 
         if (userError) {
             throw new Error(`Error fetching user: ${userError.message}`);
         }
+
+
+        console.log('user from db: ' + user[0])
 
         if (!user) {
             throw new Error("User with this activation link does not exist");

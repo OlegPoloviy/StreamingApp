@@ -24,6 +24,7 @@ export class UserController {
     static async activate(req,res,next){
         try{
             const activationLink = req.params.link;
+            console.log(activationLink)
             await Users.activate(activationLink);
             return res.redirect(process.env.CLIENT_URL)
         }catch(err){
