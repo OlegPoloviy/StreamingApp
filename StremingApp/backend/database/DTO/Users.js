@@ -89,27 +89,57 @@ export class Users {
         };
     }
 
-    static async login(email,login,password){
-         const { data: user, error } = await supabase.from("Users")
-            .select("*")
-            .or(`email.eq.${email},login.eq.${login}`);
+    static async login( login, password) {
+        try {
+            if (!login) {
+                throw ApiError.BadRequest("Email or login is required");
+            }
 
-         if(!user && user.length > 0) {
-             throw ApiError.BadRequest(`User with ${login} does not exist`);
-         }
+            const { data: user, error } = await supabase
+                .from("Users")
+                .select("*")
+                .or(`login.eq.${login}`)
+                .limit(1);
 
-         const isPasswordMatch = await bcrypt.compare(password, user[0].password);
-         if (!isPasswordMatch) {
-             throw ApiError.BadRequest(`The passwords do not match`);
-         }
+            console.log("User data from DB:", user);
 
-        const tokens = TokenService.generateTokens({ email, login });
-        await TokenService.saveToken(user[0].id, tokens.refreshToken);
+            if (error) {
+                console.error("Supabase error:", error);
+                throw new Error("Database error: " + error.message);
+            }
 
-        return {
-            ...tokens,
-            user
-        };
+            if (!user || user.length === 0) {
+                throw ApiError.BadRequest(`User with ${login} does not exist`);
+            }
+
+            const foundUser = user[0];
+
+            if (!foundUser.password) {
+                throw new Error("Password not found for this user.");
+            }
+
+            const isPasswordMatch = await bcrypt.compare(password, foundUser.password);
+            if (!isPasswordMatch) {
+                throw ApiError.BadRequest("The passwords do not match");
+            }
+
+            const tokens = TokenService.generateTokens({ email: foundUser.email, login: foundUser.login });
+            await TokenService.saveToken(foundUser.id, tokens.refreshToken);
+
+            return {
+                ...tokens,
+                user: foundUser
+            };
+        } catch (err) {
+            console.error("Login error:", err.message);
+            throw new Error("Login failed: " + err.message);
+        }
     }
+
+    static async logout(refreshToken) {
+        const token = await TokenService.deleteToken(refreshToken);
+        return token;
+    }
+
 
 }

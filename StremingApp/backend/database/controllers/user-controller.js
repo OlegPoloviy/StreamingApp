@@ -21,9 +21,8 @@ export class UserController {
     }
     static async login(req,res,next){
         try{
-            const {email,login,password} = req.body;
-
-            const userData = await Users.login(email,login,password);
+            const {login,password} = req.body;
+            const userData = await Users.login(login,password);
             res.cookie('refreshToken',userData.refreshToken,{maxAge: 30 * 24 * 60 * 1000,httpOnly:true});
             return res.json(userData)
         }catch(err){
@@ -44,11 +43,27 @@ export class UserController {
 
     static async logout(req,res,next){
         try{
+            const {refreshToken} = req.cookies;
+            const token = await Users.logout(refreshToken);
+            res.clearCookie('refreshToken',token);
+            res.send({token:token});
+        }catch(err){
+            res.status(400).send({error:err.message})
+            console.error(err.message)
+        }
+    }
 
+    static async refresh(req,res,next){
+        try{
+            const {login,password} = req.body;
+            const userData = await Users.login(login,password);
+            res.cookie('refreshToken',userData.refreshToken,{maxAge: 30 * 24 * 60 * 1000,httpOnly:true});
+            return res.json(userData)
         }catch(err){
 
         }
-    }
+
+}
 
     static async getAllUsers(req,res,next){
         try {

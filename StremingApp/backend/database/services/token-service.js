@@ -43,4 +43,34 @@ export class TokenService {
 
         return insertedToken;
     }
+
+    static async deleteToken(refreshToken) {
+        const { data: tokenData, error: fetchError } = await supabase
+            .from('token')
+            .select('*')
+            .eq('refreshToken', refreshToken)
+            .single();
+
+        if (fetchError) {
+            console.error("Error fetching token:", fetchError.message);
+        } else {
+            console.log("Token before deletion:", tokenData);
+        }
+
+        const { error } = await supabase
+            .from('token')
+            .delete()
+            .eq('refreshToken', refreshToken);
+
+        if (error) {
+            console.error("Error deleting token:", error.message);
+        }
+
+        if(error){
+            return error;
+        }
+
+        return tokenData;
+
+    }
 }
