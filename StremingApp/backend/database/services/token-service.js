@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import { supabase } from "../dbConfig.js";
+import {ApiError} from "../../exceptions/api-error.js";
 
 export class TokenService {
     static generateTokens(payload) {

@@ -1,8 +1,5 @@
 import express from "express";
 import {appRouter} from "../routes/appRouter.js";
-import {userRouter} from "../routes/usersRouter.js";
-import {auth} from "express-openid-connect";
-import {config} from "../auth/auth.js";
 import cors from "cors";
 import "dotenv/config"
 import bodyParser from "body-parser";
@@ -10,6 +7,8 @@ import cookieParser from "cookie-parser";
 import { filmRouter } from "../routes/filmsRouter.js";
 import session from "express-session";
 import {tockenRouter} from "../routes/tocken.js";
+import {ErrorMiddleware} from "./middlewares/errorMiddleware.js";
+
 
 const PORT = process.env.SERVER_PORT;
 const app = express();
@@ -20,9 +19,9 @@ app.use(cookieParser());
 app.use(session({
     secret: process.env.SESSION_SECRET,
     cookie: {
-        secure: false, // true для HTTPS
+        secure: false,
         httpOnly: false,
-        sameSite: 'none', // 'lax' або 'none' для міждоменного використання
+        sameSite: 'none',
     },
 }))
 app.use(cors({
@@ -32,6 +31,7 @@ app.use(cors({
 app.use(appRouter);
 app.use('/users',tockenRouter)
 app.use('/films',filmRouter)
+app.use(ErrorMiddleware)
 // app.use("/users",userRouter)
 
 app.listen(PORT,() => {

@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import { v4 as uuid } from 'uuid';
 import { mailService } from "../services/mail-service.js";
 import { TokenService } from "../services/token-service.js";
+import {ApiError} from "../../exceptions/api-error.js";
 
 export class Users {
     static async registration(login, email, password) {
@@ -12,7 +13,7 @@ export class Users {
                 .or(`email.eq.${email},login.eq.${login}`);
 
             if (candidate && candidate.length > 0) {
-                throw new Error("User already exists");
+                throw ApiError.BadRequest(`User with email ${email} already exists`);
             }
 
             if (!password) {
@@ -85,6 +86,29 @@ export class Users {
         return {
             message: "User successfully activated",
             userId: user[0].id,
+        };
+    }
+
+    static async login(email,login,password){
+         const { data: user, error } = await supabase.from("Users")
+            .select("*")
+            .or(`email.eq.${email},login.eq.${login}`);
+
+         if(!user && user.length > 0) {
+             throw ApiError.BadRequest(`User with ${login} does not exist`);
+         }
+
+         const isPasswordMatch = await bcrypt.compare(password, user[0].password);
+         if (!isPasswordMatch) {
+             throw ApiError.BadRequest(`The passwords do not match`);
+         }
+
+        const tokens = TokenService.generateTokens({ email, login });
+        await TokenService.saveToken(user[0].id, tokens.refreshToken);
+
+        return {
+            ...tokens,
+            user
         };
     }
 
